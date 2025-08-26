@@ -4,6 +4,15 @@ from fake_useragent import UserAgent
 from colorama import init, Fore
 from sys import argv
 
+#definition of color constants
+RED = Fore.RED
+ORANGE = "\033[38;5;214m"
+GREEN = Fore.GREEN
+CLOSE_FORMAT = "\033[0m"
+
+#initializing colorama
+init()
+
 def get_page (url) :
 	try :
 		page = requests.get(url, 
@@ -12,9 +21,9 @@ def get_page (url) :
 			"Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
 			}).content.decode()
 	except requests.exceptions.ConnectionError :
-		raise SystemExit(Fore.RED + f"ERROR : can't connect to {url}")
+		raise SystemExit(RED + f"ERROR : can't connect to {url}")
 	except requests.exceptions.MissingSchema :
-		raise SystemExit(Fore.RED + f"ERROR : the url address ({url}) isn't valid (try to use : https://{url})")
+		raise SystemExit(RED + f"ERROR : the url address ({url}) isn't valid (try to use : https://{url})")
 
 	return page
 
@@ -22,14 +31,15 @@ def get_page (url) :
 class LinksScanner :
 
 	def __init__ (self, url, args) :
+
 		self.__tags = args
 		self.__url = url
 
 		#validation
 		if not self.__url :
-			raise SystemExit(Fore.RED + "ERROR : url is empty, exiting...\n")
+			raise SystemExit(RED + "ERROR : url is empty, exiting...\n")
 		if not self.__tags :
-			print("\033[38;5;214m" + "WARNING : tags are empty, default value is a tag <a>\n" + "\033[0m")
+			print(ORANGE + "WARNING : tags are empty, default value is a tag <a>\n")
 			self.__tags = "a"
 
 		self.__links = []
@@ -64,13 +74,11 @@ class LinksScanner :
 
 if __name__ == "__main__" :
 
-	#initializing colorama
-	init()
-
 	try :
 		scanner = LinksScanner(argv[1], argv[2:])
+	#if argv doesnt receive enough arguments
 	except IndexError :
-		raise SystemExit(Fore.RED + "ERROR : arguments are empty, exiting...\n")
+		raise SystemExit(RED + "ERROR : arguments are empty, exiting...\n")
 	
 
 	scanner.start_scan()
@@ -81,7 +89,7 @@ if __name__ == "__main__" :
 	print("\n<tag> | link in a tag\n")
 	for i in range(len(links)) :
 
-		print(Fore.GREEN + f"<{tags[i].name}> |", links[i])
+		print(GREEN + f"<{tags[i].name}> |", links[i])
 
 	
 
